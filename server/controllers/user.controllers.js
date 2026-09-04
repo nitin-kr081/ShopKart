@@ -3,6 +3,10 @@ import bcrypt from 'bcrypt'
 
 // Register Controller
 
+const cookiesOption = {
+    httpOnly : true,
+    secure : true
+}
 export const registerUser = async(req , res) =>{
     try{
         const {fullName, email, password, phone} = req.body
@@ -47,7 +51,11 @@ export const registerUser = async(req , res) =>{
             phone
         })
 
-        res.status(201).json({ message: "User Resgitered", user: newUser })
+        // Generate tokens
+        const token = genToken(newUser._id)
+        res.cookie('token' , token , cookiesOption)
+
+        res.status(201).json({success : true, message: "Customer registered successfully", user: newUser })
 
     }catch(error){
         
