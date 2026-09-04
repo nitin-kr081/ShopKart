@@ -1,6 +1,7 @@
 import express from 'express'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
+import userRoutes from '../server/routes/user.routes.js'
 
 const app = express()
 
@@ -15,6 +16,7 @@ mongoose.connect(process.env.dbURL).then(()=>{
 })
 
 app.use(express.json())
+app.use('/customers' , userRoutes)
 
 app.listen(PORT , (req , res)=>{
     console.log(`Server Started at ${PORT}`)
