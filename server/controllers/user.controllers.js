@@ -110,3 +110,16 @@ export const loginUser = async(req , res) =>{
         res.status(500).json({ message: 'Internal Server Errorr', error: error })
     }
 }
+
+// Profile Controller
+
+export const getUser = async(req, res) =>{
+    res.status(200).json({
+        user: {
+            id: req.user._id,
+            fullName: req.user.fullName,
+            email: req.user.email,
+            phone: req.user.phone
+        }
+    })
+}
