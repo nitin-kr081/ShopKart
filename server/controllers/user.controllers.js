@@ -30,7 +30,7 @@ export const registerUser = async(req , res) =>{
 
         // Password must contain at least 6 characters
         if(password.length < 6){
-            return res.staus(400).json({
+            return res.status(400).json({
                 message : "Please use a Strong Password"
             })
         }
