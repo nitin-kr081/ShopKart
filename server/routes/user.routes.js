@@ -3,6 +3,7 @@ import {registerUser} from '../controllers/user.controllers.js'
 import {loginUser} from '../controllers/user.controllers.js'
 import {isAuthenticated} from '../middlewares/authMiddleware.js'
 import {getUser} from '../controllers/user.controllers.js'
+import {logoutUser} from '../controllers/user.controllers.js'
 
 const userRoutes = express.Router()
 
@@ -14,4 +15,9 @@ userRoutes.post('/login' , loginUser)
 
 // My Profile
 userRoutes.get('/me' , isAuthenticated , getUser)
+
+// Logout
+userRoutes.post('/logout' , isAuthenticated, logoutUser)
+
+
 export default userRoutes

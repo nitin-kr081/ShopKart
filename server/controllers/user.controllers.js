@@ -123,3 +123,13 @@ export const getUser = async(req, res) =>{
         }
     })
 }
+
+// Logout Controller
+
+export const logoutUser = async(req , res) =>{
+    res.clearCookie('token' , cookiesOption)
+    res.status(200).json({
+        "success": true,
+        "message": "Logged out successfully"
+    })
+}
