@@ -1,11 +1,22 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
+import {axiosInstance} from '../axiosCalls/axios.js'
 
 function Home() {
     const [form, setForm] = useState({ fullName: '', email: '', phone: '', password: '' })
 
     const handleChange = (e) => {
         setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+    }
+
+    const handleSubmit = async(e)=>{
+        e.preventDefault();
+        try{
+            await axiosInstance.post('/customers/register' , form)
+            console.log("SUCCESS")
+        }catch(error){
+            console.log(error)
+        }
     }
 
     return (
@@ -87,6 +98,7 @@ function Home() {
                     {/* Submit Button */}
                     <button
                         type="submit"
+                        onClick={handleSubmit   }
                         className="mt-2 w-full rounded-lg bg-teal-600 py-3 text-sm font-semibold text-white shadow-md shadow-teal-600/20 transition-all hover:bg-teal-700 active:bg-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-500/40"
                     >
                         Create Account
