@@ -1,9 +1,14 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link , useNavigate} from 'react-router-dom'
 import {axiosInstance} from '../axiosCalls/axios.js'
+import {useAuth} from '../context/AuthContext.jsx'
 
 function Login() {
-    const [form, setForm] = useState({ fullName: '', email: '', phone: '', password: '' })
+    const [form, setForm] = useState({ email: '', password: '' })
+    const[loader , setLoader] = useState(false)
+    const [error, setError] = useState('')
+    const navigate = useNavigate()
+    const {setUser} = useAuth()
 
     const handleChange = (e) => {
         setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
@@ -11,11 +16,18 @@ function Login() {
 
     const handleSubmit = async(e)=>{
         e.preventDefault();
+        setLoader(true)
         try{
-            await axiosInstance.post('/customers/login' , form)
-            console.log("SUCCESS")
+            const response = await axiosInstance.post('/customers/login' , form)
+            console.log("User logged in")
+            console.log(response.data.user)
+            setUser(response.data.user)
+            navigate('/home')
         }catch(error){
-            console.log(error)
+            const message = error.response.data.message
+            setError(message)
+        }finally{
+            setLoader(false)
         }
     }
 
@@ -31,6 +43,13 @@ function Login() {
                     <h1 className="text-2xl font-bold text-slate-800">ShopKart</h1>
                     <p className="mt-1 text-sm font-bold text-slate-500">Welcome Back!</p>
                 </div>
+
+                {/* Error Message */}
+                {error && (
+                    <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3.5 py-2.5 text-sm font-medium text-red-600">
+                        {error}
+                    </div>
+                )}
 
                 {/* Form */}
                 <form className="space-y-4">
@@ -68,10 +87,18 @@ function Login() {
                     {/* Submit Button */}
                     <button
                         type="submit"
+                        disabled={loader}
                         onClick={handleSubmit}
                         className="mt-2 w-full rounded-lg bg-teal-600 py-3 text-sm font-semibold text-white shadow-md shadow-teal-600/20 transition-all hover:bg-teal-700 active:bg-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-500/40"
                     >
-                        Login
+                        {loader ? (
+                            <>
+                                <span className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                                Logging in...
+                            </>
+                        ) : (
+                            'Log in'
+                        )}
                     </button>
                 </form>
 

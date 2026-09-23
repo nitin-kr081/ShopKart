@@ -16,7 +16,6 @@ mongoose.connect(process.env.dbURL).then(()=>{
 }).catch((error)=>{
     console.log(error)
 })
-
 app.use(cors({
     origin : 'http://localhost:5173',
     credentials : true
