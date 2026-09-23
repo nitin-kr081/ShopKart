@@ -5,6 +5,8 @@ import Home from './pages/Home.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
 import PublicRoute from './components/PublicRoute.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
+import Products from './pages/Products.jsx'
+import ProductDetails from './pages/ProductDetails.jsx'
 
 function App() {
 
@@ -16,6 +18,8 @@ function App() {
             <Route path='/signup' element={<PublicRoute><Signup /></PublicRoute>} />
             <Route path='/login' element={<PublicRoute><Login /></PublicRoute>} />
             <Route path='/home' element={<ProtectedRoute><Home /></ProtectedRoute>} />
+            <Route path='/products' element={<ProtectedRoute><Products /></ProtectedRoute>} />
+            <Route path='/products/:id' element={<ProtectedRoute><ProductDetails /></ProtectedRoute>} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>
