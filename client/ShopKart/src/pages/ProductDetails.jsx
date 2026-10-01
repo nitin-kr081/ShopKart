@@ -6,6 +6,7 @@ const ProductDetails = () => {
     const { id } = useParams()
     const [product, setProduct] = useState(null)
     const [error, setError] = useState('')
+    const [loading, setLoading] = useState(true)
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -16,9 +17,12 @@ const ProductDetails = () => {
             .catch((error) => {
                 setError(error.response.data.message)
             })
+            .finally(() => {
+                setLoading(false)
+            })
     }, [id])
 
-    if (!product) {
+    if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-50">
                 <p className="text-gray-500 text-lg font-medium">Loading product...</p>
@@ -26,10 +30,18 @@ const ProductDetails = () => {
         )
     }
 
+    if (error) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <p className="text-gray-500 text-lg font-medium">{error}</p>
+            </div>
+        )
+    }
+
     return (
         <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg border border-gray-100 p-6 md:p-8">
-                <button 
+                <button
                     onClick={() => navigate('/products')}
                     className="mb-6 inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium text-sm rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300 cursor-pointer"
                 >
@@ -38,9 +50,9 @@ const ProductDetails = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
                     <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-gray-50 border border-gray-100">
-                        <img 
-                            src={product.image} 
-                            alt={product.name} 
+                        <img
+                            src={product.image}
+                            alt={product.name}
                             className="w-full h-full object-cover object-center"
                         />
                     </div>
