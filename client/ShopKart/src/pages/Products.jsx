@@ -8,16 +8,28 @@ const Products = () => {
     const [error, setError] = useState('')
     const [search, setSearch] = useState('')
     const [category, setCategory] = useState('')
+    const [wishlist, setWishlist] = useState([])
 
     useEffect(() => {
-        axiosInstance.get(`/products?search=${search}&category=${category}`).then((response) => {
-            setProducts(response.data.products)
-        }).catch((error) => {
-            setError(error.response.data.message)
-        }).finally(() => {
-            setLoading(false)
-        })
-    }, [search,category])
+        axiosInstance.get(`/products?search=${search}&category=${category}`)
+            .then((response) => {
+                setProducts(response.data.products)
+            }).catch((error) => {
+                setError(error.response.data.message)
+            }).finally(() => {
+                setLoading(false)
+            })
+    }, [search, category])
+
+    useEffect(() => {
+        axiosInstance.get('/products/wishlist')
+            .then((response) => {
+                setWishlist(response.data.wishlist)
+            })
+            .catch((error) => {
+                console.log(error)
+            })
+    }, [])
 
     if (loading) {
         return (
@@ -93,7 +105,7 @@ const Products = () => {
                 {/* Product Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {products.map((product) => (
-                        <ProductCard key={product._id} product={product} />
+                        <ProductCard key={product._id} product={product} wishlist={wishlist}/>
                     ))}
                 </div>
             </div>
