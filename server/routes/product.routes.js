@@ -6,10 +6,10 @@ import { wishlist, getWishlist, removeFromWishlist } from '../controllers/wishli
 const router = express.Router()
 
 /// Register product
-router.post('/', createProduct)
+router.post('/', isAuthenticated, createProduct)
 
 // Get all products
-router.get('/', getAllProducts)
+router.get('/', isAuthenticated, getAllProducts)
 
 // Wishlist a product
 router.post('/wishlist/:productId', isAuthenticated, wishlist)
@@ -18,7 +18,7 @@ router.post('/wishlist/:productId', isAuthenticated, wishlist)
 router.get('/wishlist', isAuthenticated, getWishlist)
 
 // Get single product
-router.get('/:id', getProductById)
+router.get('/:id', isAuthenticated, getProductById)
 
 // Delete a wishlist product
 router.delete('/wishlist/:productId', isAuthenticated, removeFromWishlist)

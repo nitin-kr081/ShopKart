@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { axiosInstance } from '../axiosCalls/axios.js'
 
-const ProductCard = ({ product, wishlist = [] }) => {
+const ProductCard = ({ product, wishlist = [], onWishlistChange }) => {
     const navigate = useNavigate()
     const [isWishlisted, setIsWishlisted] = useState(false)
     const [wishlistLoading, setWishlistLoading] = useState(false)
@@ -21,9 +21,11 @@ const ProductCard = ({ product, wishlist = [] }) => {
             if (isWishlisted) {
                 await axiosInstance.delete(`/products/wishlist/${product._id}`)
                 setIsWishlisted(false)
+                onWishlistChange?.(product._id, false)
             } else {
                 await axiosInstance.post(`/products/wishlist/${product._id}`)
                 setIsWishlisted(true)
+                onWishlistChange?.(product._id, true)
             }
         } catch (error) {
             setWishlistError(
@@ -49,20 +51,18 @@ const ProductCard = ({ product, wishlist = [] }) => {
                     onClick={toggleWishlist}
                     disabled={wishlistLoading}
                     aria-label={wishlistLoading ? "Saving wishlist" : "Add to Wishlist"}
-                    className={`absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-md transition-all duration-200 focus:outline-none ${
-                        wishlistLoading
+                    className={`absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-md transition-all duration-200 focus:outline-none ${wishlistLoading
                             ? 'opacity-60 cursor-not-allowed'
                             : 'hover:scale-110 active:scale-95 cursor-pointer'
-                    }`}
+                        }`}
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
-                        className={`w-5 h-5 transition-colors duration-200 ${
-                            isWishlisted
+                        className={`w-5 h-5 transition-colors duration-200 ${isWishlisted
                                 ? 'fill-red-500 stroke-red-500'
                                 : 'fill-none stroke-gray-600 hover:stroke-red-500'
-                        }`}
+                            }`}
                         strokeWidth="2"
                     >
                         <path
@@ -97,11 +97,10 @@ const ProductCard = ({ product, wishlist = [] }) => {
                             Price: ₹{product.price}
                         </p>
 
-                        <p className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium ${
-                            product.stock > 0
+                        <p className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium ${product.stock > 0
                                 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                                 : 'bg-rose-50 text-rose-700 border border-rose-200'
-                        }`}>
+                            }`}>
                             <span className={`w-1.5 h-1.5 rounded-full ${product.stock > 0 ? 'bg-emerald-500' : 'bg-rose-500'}`} />
                             {product.stock > 0 ? 'In Stock' : 'Out of Stock'}
                         </p>

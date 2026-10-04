@@ -28,10 +28,7 @@ export const wishlist = async (req, res) => {
 export const getWishlist = async (req, res) => {
     try {
         const userId = req.user._id
-        const user = await User.findById(userId).populate({
-            path: "wishlist",
-            select: "name price category image stock"
-        })
+        const user = await User.findById(userId).populate("wishlist", "name price category image stock")
         const wishlist = user.wishlist
         res.status(200).json({
             success: true,

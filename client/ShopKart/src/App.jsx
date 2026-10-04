@@ -7,6 +7,8 @@ import PublicRoute from './components/PublicRoute.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 import Products from './pages/Products.jsx'
 import ProductDetails from './pages/ProductDetails.jsx'
+import Wishlist from './pages/Wishlist.jsx'
+import Navbar from './components/Navbar.jsx'
 
 function App() {
 
@@ -14,12 +16,14 @@ function App() {
     <>
       <AuthProvider>
         <BrowserRouter>
+          <Navbar />
           <Routes>
             <Route path='/signup' element={<PublicRoute><Signup /></PublicRoute>} />
             <Route path='/login' element={<PublicRoute><Login /></PublicRoute>} />
             <Route path='/home' element={<ProtectedRoute><Home /></ProtectedRoute>} />
             <Route path='/products' element={<ProtectedRoute><Products /></ProtectedRoute>} />
             <Route path='/products/:id' element={<ProtectedRoute><ProductDetails /></ProtectedRoute>} />
+            <Route path='/wishlist' element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>
