@@ -9,6 +9,9 @@ import Products from './pages/Products.jsx'
 import ProductDetails from './pages/ProductDetails.jsx'
 import Wishlist from './pages/Wishlist.jsx'
 import Navbar from './components/Navbar.jsx'
+import AddProduct from './pages/AddProduct.jsx'
+import MyProducts from './pages/MyProducts.jsx'
+import EditProduct from './pages/EditProduct.jsx'
 
 function App() {
 
@@ -24,6 +27,9 @@ function App() {
             <Route path='/products' element={<ProtectedRoute><Products /></ProtectedRoute>} />
             <Route path='/products/:id' element={<ProtectedRoute><ProductDetails /></ProtectedRoute>} />
             <Route path='/wishlist' element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
+            <Route path='/add-product' element={<ProtectedRoute><AddProduct /></ProtectedRoute>} />
+            <Route path='/my-products' element={<ProtectedRoute><MyProducts /></ProtectedRoute>} />
+            <Route path='/edit-product/:id' element={<ProtectedRoute><EditProduct /></ProtectedRoute>} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>

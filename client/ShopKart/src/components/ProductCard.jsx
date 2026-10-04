@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { axiosInstance } from '../axiosCalls/axios.js'
 
-const ProductCard = ({ product, wishlist = [], onWishlistChange }) => {
+const ProductCard = ({ product, wishlist = [], onWishlistChange, showSellerActions = false, onDelete }) => {
     const navigate = useNavigate()
     const [isWishlisted, setIsWishlisted] = useState(false)
     const [wishlistLoading, setWishlistLoading] = useState(false)
     const [wishlistError, setWishlistError] = useState("")
+    const [deleteLoading, setDeleteLoading] = useState(false)
+    const [deleteError, setDeleteError] = useState("")
 
     useEffect(() => {
         const exists = wishlist.some((item) => item._id === product._id)
@@ -36,42 +38,65 @@ const ProductCard = ({ product, wishlist = [], onWishlistChange }) => {
         }
     }
 
+    const handleEdit = (e) => {
+        e.stopPropagation()
+        navigate(`/edit-product/${product._id}`)
+    }
+
+    const handleDelete = async (e) => {
+        e.stopPropagation()
+        try {
+            setDeleteLoading(true)
+            setDeleteError("")
+            await axiosInstance.delete(`/products/${product._id}`)
+            onDelete?.(product._id)
+        } catch (error) {
+            setDeleteError(
+                error.response?.data?.message || "Failed to delete product"
+            )
+        } finally {
+            setDeleteLoading(false)
+        }
+    }
+
     return (
         <div className="max-w-sm w-full rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-xl transition-shadow duration-300 border border-gray-100 flex flex-col justify-between group">
-            <div className="relative h-56 w-full overflow-hidden bg-gray-50">
+            <div className="relative h-56 w-full overflow-hidden bg-gray-50 flex items-center justify-center">
                 <img
                     src={product.image}
                     alt={product.name}
-                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full object-contain object-center group-hover:scale-105 transition-transform duration-300"
                 />
 
-                {/* Wishlist Button */}
-                <button
-                    type="button"
-                    onClick={toggleWishlist}
-                    disabled={wishlistLoading}
-                    aria-label={wishlistLoading ? "Saving wishlist" : "Add to Wishlist"}
-                    className={`absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-md transition-all duration-200 focus:outline-none ${wishlistLoading
-                            ? 'opacity-60 cursor-not-allowed'
-                            : 'hover:scale-110 active:scale-95 cursor-pointer'
-                        }`}
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        className={`w-5 h-5 transition-colors duration-200 ${isWishlisted
-                                ? 'fill-red-500 stroke-red-500'
-                                : 'fill-none stroke-gray-600 hover:stroke-red-500'
+                {/* Wishlist Button (Only shown when not in seller view) */}
+                {!showSellerActions && (
+                    <button
+                        type="button"
+                        onClick={toggleWishlist}
+                        disabled={wishlistLoading}
+                        aria-label={wishlistLoading ? "Saving wishlist" : "Add to Wishlist"}
+                        className={`absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-md transition-all duration-200 focus:outline-none ${wishlistLoading
+                                ? 'opacity-60 cursor-not-allowed'
+                                : 'hover:scale-110 active:scale-95 cursor-pointer'
                             }`}
-                        strokeWidth="2"
                     >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
-                        />
-                    </svg>
-                </button>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            className={`w-5 h-5 transition-colors duration-200 ${isWishlisted
+                                    ? 'fill-red-500 stroke-red-500'
+                                    : 'fill-none stroke-gray-600 hover:stroke-red-500'
+                                }`}
+                            strokeWidth="2"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
+                            />
+                        </svg>
+                    </button>
+                )}
 
                 {wishlistLoading && (
                     <p className="absolute top-14 right-3 z-10 text-xs text-gray-500 bg-white px-2 py-1 rounded shadow">
@@ -82,6 +107,12 @@ const ProductCard = ({ product, wishlist = [], onWishlistChange }) => {
                 {wishlistError && (
                     <p className="absolute top-14 right-3 z-10 text-xs text-red-500 bg-white px-2 py-1 rounded shadow">
                         {wishlistError}
+                    </p>
+                )}
+
+                {deleteError && (
+                    <p className="absolute top-3 left-3 right-3 z-10 text-xs text-red-500 bg-white/90 backdrop-blur-sm px-2 py-1 rounded shadow text-center">
+                        {deleteError}
                     </p>
                 )}
             </div>
@@ -107,12 +138,34 @@ const ProductCard = ({ product, wishlist = [], onWishlistChange }) => {
                     </div>
                 </div>
 
-                <button
-                    onClick={() => navigate(`/products/${product._id}`)}
-                    className="mt-5 w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-medium text-sm rounded-xl shadow-sm hover:shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 cursor-pointer"
-                >
-                    View Details
-                </button>
+                {/* Seller Actions (Edit/Delete) or Standard View Details */}
+                {showSellerActions ? (
+                    <div className="mt-5 grid grid-cols-2 gap-3">
+                        <button
+                            onClick={handleEdit}
+                            type="button"
+                            disabled={deleteLoading}
+                            className="py-2 px-3 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 font-medium text-sm rounded-xl transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            Edit
+                        </button>
+                        <button
+                            onClick={handleDelete}
+                            type="button"
+                            disabled={deleteLoading}
+                            className="py-2 px-3 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-medium text-sm rounded-xl transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-rose-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {deleteLoading ? 'Deleting...' : 'Delete'}
+                        </button>
+                    </div>
+                ) : (
+                    <button
+                        onClick={() => navigate(`/products/${product._id}`)}
+                        className="mt-5 w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-medium text-sm rounded-xl shadow-sm hover:shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 cursor-pointer"
+                    >
+                        View Details
+                    </button>
+                )}
             </div>
         </div>
     )
