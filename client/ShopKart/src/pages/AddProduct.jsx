@@ -170,8 +170,8 @@ export default function AddProduct() {
                 {message.text && (
                     <div
                         className={`mx-6 sm:mx-10 mt-6 p-4 rounded-lg text-sm font-medium ${message.type === 'success'
-                                ? 'bg-green-50 text-green-700 border border-green-200'
-                                : 'bg-red-50 text-red-700 border border-red-200'
+                            ? 'bg-green-50 text-green-700 border border-green-200'
+                            : 'bg-red-50 text-red-700 border border-red-200'
                             }`}
                     >
                         {message.text}

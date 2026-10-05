@@ -114,7 +114,7 @@ export const getMyProducts = async (req, res) => {
     }
 }
 
-// Delete product
+// Delete logged-in user's products
 export const deleteProduct = async (req, res) => {
     try {
         const { id } = req.params
@@ -149,7 +149,7 @@ export const deleteProduct = async (req, res) => {
     }
 }
 
-// Update product
+// Update logged-in user's products
 export const updateProduct = async (req, res) => {
     try {
         const { id } = req.params
@@ -171,11 +171,21 @@ export const updateProduct = async (req, res) => {
             })
         }
 
+        let newImageUrl
+
+        if (req.file) {
+            const updatedImage = await uploadToCloudinary(req.file.buffer)
+            newImageUrl = updatedImage.secure_url
+        }
+
         product.name = name
         product.description = description
         product.price = price
         product.category = category
         product.stock = stock
+        if (newImageUrl) {
+            product.image = newImageUrl
+        }
 
         await product.save()
 
