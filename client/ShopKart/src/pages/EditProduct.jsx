@@ -152,11 +152,10 @@ export default function EditProduct() {
         {/* Status Message Display */}
         {message.text && (
           <div
-            className={`mx-6 sm:mx-10 mt-6 p-4 rounded-lg text-sm font-medium ${
-              message.type === 'success'
-                ? 'bg-green-50 text-green-700 border border-green-200'
-                : 'bg-red-50 text-red-700 border border-red-200'
-            }`}
+            className={`mx-6 sm:mx-10 mt-6 p-4 rounded-lg text-sm font-medium ${message.type === 'success'
+              ? 'bg-green-50 text-green-700 border border-green-200'
+              : 'bg-red-50 text-red-700 border border-red-200'
+              }`}
           >
             {message.text}
           </div>
@@ -177,9 +176,8 @@ export default function EditProduct() {
               value={formData.name}
               onChange={handleChange}
               placeholder="e.g. Wireless Noise-Canceling Headphones"
-              className={`mt-2 block w-full rounded-lg border ${
-                errors.name ? 'border-red-500' : 'border-gray-300'
-              } px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600 transition-colors text-sm`}
+              className={`mt-2 block w-full rounded-lg border ${errors.name ? 'border-red-500' : 'border-gray-300'
+                } px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600 transition-colors text-sm`}
             />
             {errors.name && <p className="mt-1.5 text-xs text-red-500">{errors.name}</p>}
           </div>
@@ -196,9 +194,8 @@ export default function EditProduct() {
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
-                className={`mt-2 block w-full rounded-lg border ${
-                  errors.category ? 'border-red-500' : 'border-gray-300'
-                } bg-white px-4 py-2.5 text-gray-900 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600 transition-colors text-sm`}
+                className={`mt-2 block w-full rounded-lg border ${errors.category ? 'border-red-500' : 'border-gray-300'
+                  } bg-white px-4 py-2.5 text-gray-900 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600 transition-colors text-sm`}
               >
                 <option value="">Select a category</option>
                 {CATEGORIES.map((cat) => (
@@ -228,9 +225,8 @@ export default function EditProduct() {
                   value={formData.price}
                   onChange={handleChange}
                   placeholder="0.00"
-                  className={`block w-full rounded-lg border ${
-                    errors.price ? 'border-red-500' : 'border-gray-300'
-                  } pl-8 pr-4 py-2.5 text-gray-900 placeholder-gray-400 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600 transition-colors text-sm`}
+                  className={`block w-full rounded-lg border ${errors.price ? 'border-red-500' : 'border-gray-300'
+                    } pl-8 pr-4 py-2.5 text-gray-900 placeholder-gray-400 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600 transition-colors text-sm`}
                 />
               </div>
               {errors.price && <p className="mt-1.5 text-xs text-red-500">{errors.price}</p>}
@@ -250,9 +246,8 @@ export default function EditProduct() {
               value={formData.stock}
               onChange={handleChange}
               placeholder="e.g. 50"
-              className={`mt-2 block w-full rounded-lg border ${
-                errors.stock ? 'border-red-500' : 'border-gray-300'
-              } px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600 transition-colors text-sm`}
+              className={`mt-2 block w-full rounded-lg border ${errors.stock ? 'border-red-500' : 'border-gray-300'
+                } px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600 transition-colors text-sm`}
             />
             {errors.stock && <p className="mt-1.5 text-xs text-red-500">{errors.stock}</p>}
           </div>
@@ -269,9 +264,8 @@ export default function EditProduct() {
               value={formData.description}
               onChange={handleChange}
               placeholder="Write a brief overview of the product features..."
-              className={`mt-2 block w-full rounded-lg border ${
-                errors.description ? 'border-red-500' : 'border-gray-300'
-              } px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600 transition-colors text-sm resize-y`}
+              className={`mt-2 block w-full rounded-lg border ${errors.description ? 'border-red-500' : 'border-gray-300'
+                } px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600 transition-colors text-sm resize-y`}
             />
             {errors.description && <p className="mt-1.5 text-xs text-red-500">{errors.description}</p>}
           </div>
