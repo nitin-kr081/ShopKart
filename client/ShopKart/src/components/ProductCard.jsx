@@ -1,58 +1,108 @@
+
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 import { axiosInstance } from '../axiosCalls/axios.js'
+import { addToCart } from '../redux/cartSlice.js'
 
 const ProductCard = ({ product, wishlist = [], onWishlistChange, showSellerActions = false, onDelete }) => {
     const navigate = useNavigate()
+    const dispatch = useDispatch()
+
     const [isWishlisted, setIsWishlisted] = useState(false)
     const [wishlistLoading, setWishlistLoading] = useState(false)
-    const [wishlistError, setWishlistError] = useState("")
+    const [wishlistError, setWishlistError] = useState('')
     const [deleteLoading, setDeleteLoading] = useState(false)
-    const [deleteError, setDeleteError] = useState("")
+    const [deleteError, setDeleteError] = useState('')
+    const [addingToCart, setAddingToCart] = useState(false)
+    const [cartError, setCartError] = useState('')
+
+    const cartItems = useSelector((state) => state.cart.cartItems)
+
+    const isInCart = cartItems.some(
+        (item) => item.product?._id === product._id
+    )
 
     useEffect(() => {
-        const exists = wishlist.some((item) => item._id === product._id)
+        const exists = wishlist.some(
+            (item) => item._id === product._id
+        )
         setIsWishlisted(exists)
     }, [wishlist, product._id])
 
+    // Add product to cart using Redux Toolkit
+    const handleAddToCart = async (e) => {
+        e.stopPropagation()
+
+        try {
+            setAddingToCart(true)
+            setCartError('')
+
+            await dispatch(addToCart(product._id)).unwrap()
+        } catch (error) {
+            setCartError(
+                typeof error === 'string'
+                    ? error
+                    : 'Failed to add product to cart'
+            )
+        } finally {
+            setAddingToCart(false)
+        }
+    }
+
+    // Add or remove product from wishlist
     const toggleWishlist = async (e) => {
-        e.stopPropagation() // Prevents triggering card navigation
+        e.stopPropagation()
+
         try {
             setWishlistLoading(true)
-            setWishlistError("")
+            setWishlistError('')
+
             if (isWishlisted) {
-                await axiosInstance.delete(`/products/wishlist/${product._id}`)
+                await axiosInstance.delete(
+                    `/products/wishlist/${product._id}`
+                )
+
                 setIsWishlisted(false)
                 onWishlistChange?.(product._id, false)
             } else {
-                await axiosInstance.post(`/products/wishlist/${product._id}`)
+                await axiosInstance.post(
+                    `/products/wishlist/${product._id}`
+                )
+
                 setIsWishlisted(true)
                 onWishlistChange?.(product._id, true)
             }
         } catch (error) {
             setWishlistError(
-                error.response?.data?.message || "Failed to update wishlist"
+                error.response?.data?.message ||
+                'Failed to update wishlist'
             )
         } finally {
             setWishlistLoading(false)
         }
     }
 
+    // Navigate to edit product
     const handleEdit = (e) => {
         e.stopPropagation()
         navigate(`/edit-product/${product._id}`)
     }
 
+    // Delete product
     const handleDelete = async (e) => {
         e.stopPropagation()
+
         try {
             setDeleteLoading(true)
-            setDeleteError("")
+            setDeleteError('')
+
             await axiosInstance.delete(`/products/${product._id}`)
             onDelete?.(product._id)
         } catch (error) {
             setDeleteError(
-                error.response?.data?.message || "Failed to delete product"
+                error.response?.data?.message ||
+                'Failed to delete product'
             )
         } finally {
             setDeleteLoading(false)
@@ -61,6 +111,8 @@ const ProductCard = ({ product, wishlist = [], onWishlistChange, showSellerActio
 
     return (
         <div className="max-w-sm w-full rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-xl transition-shadow duration-300 border border-gray-100 flex flex-col justify-between group">
+
+            {/* Product Image */}
             <div className="relative h-56 w-full overflow-hidden bg-gray-50 flex items-center justify-center">
                 <img
                     src={product.image}
@@ -68,13 +120,17 @@ const ProductCard = ({ product, wishlist = [], onWishlistChange, showSellerActio
                     className="w-full h-full object-contain object-center group-hover:scale-105 transition-transform duration-300"
                 />
 
-                {/* Wishlist Button (Only shown when not in seller view) */}
+                {/* Wishlist Button */}
                 {!showSellerActions && (
                     <button
                         type="button"
                         onClick={toggleWishlist}
                         disabled={wishlistLoading}
-                        aria-label={wishlistLoading ? "Saving wishlist" : "Add to Wishlist"}
+                        aria-label={
+                            isWishlisted
+                                ? 'Remove from Wishlist'
+                                : 'Add to Wishlist'
+                        }
                         className={`absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-md transition-all duration-200 focus:outline-none ${wishlistLoading
                             ? 'opacity-60 cursor-not-allowed'
                             : 'hover:scale-110 active:scale-95 cursor-pointer'
@@ -98,18 +154,21 @@ const ProductCard = ({ product, wishlist = [], onWishlistChange, showSellerActio
                     </button>
                 )}
 
+                {/* Wishlist Loading */}
                 {wishlistLoading && (
                     <p className="absolute top-14 right-3 z-10 text-xs text-gray-500 bg-white px-2 py-1 rounded shadow">
                         Saving...
                     </p>
                 )}
 
+                {/* Wishlist Error */}
                 {wishlistError && (
                     <p className="absolute top-14 right-3 z-10 text-xs text-red-500 bg-white px-2 py-1 rounded shadow">
                         {wishlistError}
                     </p>
                 )}
 
+                {/* Delete Error */}
                 {deleteError && (
                     <p className="absolute top-3 left-3 right-3 z-10 text-xs text-red-500 bg-white/90 backdrop-blur-sm px-2 py-1 rounded shadow text-center">
                         {deleteError}
@@ -117,28 +176,38 @@ const ProductCard = ({ product, wishlist = [], onWishlistChange, showSellerActio
                 )}
             </div>
 
+            {/* Product Information */}
             <div className="p-5 flex flex-col flex-grow justify-between">
                 <div>
                     <h2 className="text-lg font-bold text-gray-800 line-clamp-1 group-hover:text-indigo-600 transition-colors">
                         {product.name}
                     </h2>
 
-                    <div className="mt-3 flex items-center justify-between">
+                    <div className="mt-3 flex items-center justify-between gap-2">
                         <p className="text-2xl font-extrabold text-gray-900">
                             Price: ₹{product.price}
                         </p>
 
-                        <p className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium ${product.stock > 0
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                            : 'bg-rose-50 text-rose-700 border border-rose-200'
-                            }`}>
-                            <span className={`w-1.5 h-1.5 rounded-full ${product.stock > 0 ? 'bg-emerald-500' : 'bg-rose-500'}`} />
-                            {product.stock > 0 ? 'In Stock' : 'Out of Stock'}
+                        <p
+                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium ${product.stock > 0
+                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                : 'bg-rose-50 text-rose-700 border border-rose-200'
+                                }`}
+                        >
+                            <span
+                                className={`w-1.5 h-1.5 rounded-full ${product.stock > 0
+                                    ? 'bg-emerald-500'
+                                    : 'bg-rose-500'
+                                    }`}
+                            />
+                            {product.stock > 0
+                                ? 'In Stock'
+                                : 'Out of Stock'}
                         </p>
                     </div>
                 </div>
 
-                {/* Seller Actions (Edit/Delete) or Standard View Details */}
+                {/* Seller Actions or Customer Actions */}
                 {showSellerActions ? (
                     <div className="mt-5 grid grid-cols-2 gap-3">
                         <button
@@ -149,6 +218,7 @@ const ProductCard = ({ product, wishlist = [], onWishlistChange, showSellerActio
                         >
                             Edit
                         </button>
+
                         <button
                             onClick={handleDelete}
                             type="button"
@@ -159,12 +229,46 @@ const ProductCard = ({ product, wishlist = [], onWishlistChange, showSellerActio
                         </button>
                     </div>
                 ) : (
-                    <button
-                        onClick={() => navigate(`/products/${product._id}`)}
-                        className="mt-5 w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-medium text-sm rounded-xl shadow-sm hover:shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 cursor-pointer"
-                    >
-                        View Details
-                    </button>
+                    <div className="mt-5 space-y-3">
+                        {/* Add to Cart */}
+                        <button
+                            type="button"
+                            onClick={handleAddToCart}
+                            disabled={
+                                addingToCart || product.stock <= 0
+                            }
+                            className="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-medium text-sm rounded-xl shadow-sm hover:shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                        >
+                            {addingToCart
+                                ? 'Adding...'
+                                : product.stock <= 0
+                                    ? 'Out of Stock'
+                                    : isInCart
+                                        ? 'Add Another'
+                                        : 'Add to Cart'}
+                        </button>
+
+                        {/* Cart Error */}
+                        {cartError && (
+                            <p
+                                className="text-sm text-rose-600"
+                                role="alert"
+                            >
+                                {cartError}
+                            </p>
+                        )}
+
+                        {/* View Details */}
+                        <button
+                            type="button"
+                            onClick={() =>
+                                navigate(`/products/${product._id}`)
+                            }
+                            className="w-full py-2.5 px-4 border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium text-sm rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 cursor-pointer"
+                        >
+                            View Details
+                        </button>
+                    </div>
                 )}
             </div>
         </div>

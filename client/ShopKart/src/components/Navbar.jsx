@@ -1,11 +1,28 @@
 import React from 'react'
+import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchCart, clearCart } from '../redux/cartSlice.js'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 import { axiosInstance } from '../axiosCalls/axios.js'
 
 const Navbar = () => {
-    const { setUser } = useAuth()
+    const { user, setUser, loading } = useAuth()
     const navigate = useNavigate()
+
+    const dispatch = useDispatch()
+
+    const cartItems = useSelector((state) => state.cart.cartItems)
+
+    useEffect(() => {
+        if (loading) return
+
+        if (user) {
+            dispatch(fetchCart())
+        } else {
+            dispatch(clearCart())
+        }
+    }, [user, loading, dispatch])
 
     const handleLogout = async () => {
         try {
@@ -17,6 +34,11 @@ const Navbar = () => {
             navigate('/login')
         }
     }
+
+    const cartCount = cartItems.reduce(
+        (total, item) => total + item.quantity,
+        0
+    )
 
     const navLinkClasses = ({ isActive }) =>
         `flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${isActive
@@ -71,6 +93,28 @@ const Navbar = () => {
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
                             </svg>
                             <span>Wishlist</span>
+                        </NavLink>
+
+                        {/* Cart */}
+                        <NavLink to="/cart" className={navLinkClasses}>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth="1.8"
+                                stroke="currentColor"
+                                className="w-4 h-4"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M3 3h2l2.4 12.4a2 2 0 002 1.6h8.7a2 2 0 002-1.6L22 7H6"
+                                />
+                                <circle cx="10" cy="21" r="1" />
+                                <circle cx="18" cy="21" r="1" />
+                            </svg>
+
+                            <span>Cart ({cartCount})</span>
                         </NavLink>
 
                         {/* My Products */}
