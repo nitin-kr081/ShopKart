@@ -4,10 +4,16 @@ import {genToken} from "../utils/generateTokens.js"
 
 // Register Controller
 
+
+const isProduction = process.env.NODE_ENV === 'production'
+
 const cookiesOption = {
-    httpOnly : true,
-    secure : true
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax',
+    path: '/'
 }
+
 
 export const registerUser = async(req , res) =>{
     try{
