@@ -230,14 +230,12 @@ const Cart = () => {
                             </div>
                         </div>
 
-                        <button
-                            type="button"
-                            disabled
-                            title="Checkout will be implemented in Lab-06"
-                            className="mt-6 w-full cursor-not-allowed rounded-xl bg-indigo-600 px-5 py-3 font-semibold text-white opacity-60"
+                        <Link
+                            to="/checkout"
+                            className="mt-6 block w-full rounded-xl bg-indigo-600 px-5 py-3 text-center font-semibold text-white transition hover:bg-indigo-700"
                         >
                             Proceed to Checkout
-                        </button>
+                        </Link>
 
                         <Link
                             to="/products"

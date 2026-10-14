@@ -13,6 +13,9 @@ import AddProduct from './pages/AddProduct.jsx'
 import MyProducts from './pages/MyProducts.jsx'
 import EditProduct from './pages/EditProduct.jsx'
 import Cart from './pages/Cart.jsx'
+import Checkout from './pages/Checkout.jsx'
+import MyOrders from './pages/MyOrders.jsx'
+import OrderDetails from './pages/OrderDetails.jsx'
 
 function App() {
 
@@ -32,6 +35,9 @@ function App() {
             <Route path='/add-product' element={<ProtectedRoute><AddProduct /></ProtectedRoute>} />
             <Route path='/my-products' element={<ProtectedRoute><MyProducts /></ProtectedRoute>} />
             <Route path='/edit-product/:id' element={<ProtectedRoute><EditProduct /></ProtectedRoute>} />
+            <Route path='/checkout' element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+            <Route path='/orders' element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
+            <Route path='/orders/:id' element={<ProtectedRoute><OrderDetails /></ProtectedRoute>} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>

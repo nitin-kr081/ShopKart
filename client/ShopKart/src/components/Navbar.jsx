@@ -124,6 +124,11 @@ const Navbar = () => {
                             </svg>
                             <span>My Products</span>
                         </NavLink>
+
+                        {/*My Orders*/}
+                        <NavLink to="/orders" className="text-slate-600 hover:text-indigo-600 font-medium">
+                            My Orders
+                        </NavLink>
                     </div>
 
                     {/* Logout Button */}
