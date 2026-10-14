@@ -22,7 +22,7 @@ function Login() {
             console.log("User logged in")
             console.log(response.data.user)
             setUser(response.data.user)
-            navigate('/home')
+            navigate('/')
         }catch(error){
             const message = error.response.data.message
             setError(message)

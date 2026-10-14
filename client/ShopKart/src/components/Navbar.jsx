@@ -52,7 +52,7 @@ const Navbar = () => {
                 <div className="flex items-center justify-between h-16">
                     {/* Brand / Logo */}
                     <div className="flex-shrink-0">
-                        <NavLink to="/home" className="flex items-center gap-2.5 group">
+                        <NavLink to="/" className="flex items-center gap-2.5 group">
                             <div className="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md shadow-indigo-200 group-hover:scale-105 transition-transform">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -72,7 +72,7 @@ const Navbar = () => {
                     {/* Navigation Links */}
                     <div className="flex items-center space-x-1 sm:space-x-2">
                         {/* Home */}
-                        <NavLink to="/home" className={navLinkClasses}>
+                        <NavLink to="/" className={navLinkClasses}>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.8" stroke="currentColor" className="w-4 h-4">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
                             </svg>

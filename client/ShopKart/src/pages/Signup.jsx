@@ -21,7 +21,7 @@ function Signup() {
             const response = await axiosInstance.post('/customers/register', form)
             console.log("User Registered")
             setUser(response.data.user)
-            navigate('/home')
+            navigate('/')
         } catch (error) {
             const message = error.response.data.message
             setError(message)
